@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, View, TouchableOpacity, Button } from 'react-native'
+import { Text, View, TouchableOpacity, } from 'react-native'
 import styles from '../styles/styles'
 
 module.exports = function CalculatorScreen(){
@@ -38,7 +38,7 @@ module.exports = function CalculatorScreen(){
                 //DIVIDE POR 0
                 const resultDiv = (fistNumber / lastNumber);
                 if((!resultDiv && !resultDiv.toString().includes('0')) || !Number.isFinite(resultDiv)){
-                        setLastNumber("")
+                        setLastNumber("Error")
                         setCurrentNumber("")
                         return
                     }
