@@ -5,15 +5,15 @@ import styles from '../styles/styles'
 module.exports = function CalculatorScreen(){
     // Mapeamento de teclas
     const buttons = ['LIMPAR', 'DEL', '%', '/', 7, 8, 9, "x", 4, 5, 6, '-', 1, 2, 3, '+', 0, '.', '+/-', '=']
-
-    function _isOperator(operator){
-        return operator === '+' | operator === "-" | operator === "x" | operator === "/"
-    }
-
     const [currentNumber, setCurrentNumber] = useState("")
     const [lastNumber, setLastNumber] = useState("")
+    const operators = ['+', '-', 'x', '/']
 
-    function calculator(){
+    function _isOperator(operator){
+        return operators.includes(operator)
+    }
+
+    function calculator(params={ operatorPressed: '' }){
         const splitNumbers = currentNumber.split(' ')
         const fistNumber = parseFloat(splitNumbers[0])
         const lastNumber = parseFloat(splitNumbers[2])
@@ -26,13 +26,13 @@ module.exports = function CalculatorScreen(){
         setLastNumber(`${currentNumber} = `)
         switch(operator){
             case '+':
-                setCurrentNumber((fistNumber + lastNumber).toString())
+                setCurrentNumber(`${(fistNumber + lastNumber).toString()}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
                 return
             case '-': 
-                setCurrentNumber((fistNumber - lastNumber).toString())
+                setCurrentNumber(`${(fistNumber - lastNumber).toString()}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
                 return
             case 'x':
-                setCurrentNumber((fistNumber * lastNumber).toString())
+                setCurrentNumber(`${(fistNumber * lastNumber).toString()}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
                 return
             case '/':
                 //DIVIDE POR 0
@@ -42,7 +42,7 @@ module.exports = function CalculatorScreen(){
                         setCurrentNumber("")
                         return
                     }
-                setCurrentNumber(resultDiv.toString())
+                setCurrentNumber(`${resultDiv.toString()}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
                 return
         }
     }
@@ -91,10 +91,9 @@ module.exports = function CalculatorScreen(){
                 return
             }
             //faz a conta se já tem outra conta
-            if(values.length > 2) calculator()
+            if(values.length > 2) calculator({operatorPressed: buttonPressed})
             //inserção do operador
-            else if(values.length > 0)
-                setCurrentNumber(currentNumber + " " + buttonPressed + " ")
+            else if(values.length > 0) setCurrentNumber(currentNumber + " " + buttonPressed + " ")
             return
         }
         //MAXLENGHT FOR NUMBERS CASO QUEIRA
