@@ -7,17 +7,17 @@ module.exports = StyleSheet.create({
     results: {
         flex: 2,
         justifyContent: "center",
-        backgroundColor: "#f5f5f5"
+        backgroundColor:  '#1f0033',
     },
     resultText: {
-        color: "#282F38",
+        color: "#ddd",
         fontSize: 32,
         fontWeight: "bold",
         padding: 12,
         textAlign: "right"
     },
     historyText:{
-        color: "#7c7c7c",
+        color: "#777",
         fontSize: 20,
         marginRight: 10,
         alignSelf: 'flex-end',
@@ -27,7 +27,7 @@ module.exports = StyleSheet.create({
         flexWrap: 'wrap',
     },
     button: {
-        backgroundColor: 'white',
+        backgroundColor: '#290066',
         alignItems: 'center',
         justifyContent: 'center',
         minWidth: 90, 
