@@ -7,7 +7,7 @@ module.exports = function CalculatorScreen(){
     const buttons = ['LIMPAR', 'DEL', '%', '/', 7, 8, 9, "x", 4, 5, 6, '-', 1, 2, 3, '+', 0, '.', '+/-', '=']
     const [currentNumber, setCurrentNumber] = useState("")
     const [lastNumber, setLastNumber] = useState("")
-    const operators = ['+', '-', 'x', '/']
+    const operators = ['+', '-', 'x', '/', '%']
 
     function _isOperator(operator){
         return operators.includes(operator)
@@ -15,33 +15,46 @@ module.exports = function CalculatorScreen(){
 
     function calculator(params={ operatorPressed: '' }){
         const splitNumbers = currentNumber.split(' ')
-        const fistNumber = parseFloat(splitNumbers[0])
-        const lastNumber = parseFloat(splitNumbers[2])
+        const firstNumber = parseFloat(splitNumbers[0])
         const operator = splitNumbers[1]
+        const lastNumber = splitNumbers[2] !== '-' ? parseFloat(splitNumbers[2]) : 0 //Ajusta erro de calculo caso lastNumber == '-'
 
-        if(!fistNumber) if(!splitNumbers[0].includes('0')) return
-        if(!lastNumber) if(!splitNumbers[2].includes('0')) return
+        //Validação
+        if(operator !== '%'){
+            if(!firstNumber) if(!splitNumbers[0].includes('0') && splitNumbers[2] !== '-') return
+            if(!lastNumber) if(!splitNumbers[2].includes('0') && splitNumbers[2] !== '-') return
+        }
 
+        console.log("2 => " + lastNumber)
         // Faz ação referente tecla pressionada
-        setLastNumber(`${currentNumber} = `)
+        setLastNumber(`${firstNumber} ${operator} ${lastNumber ? lastNumber : ''} = `)
         switch(operator){
             case '+':
-                setCurrentNumber(`${(fistNumber + lastNumber).toString()}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
+                setCurrentNumber(`${(firstNumber + lastNumber).toString()}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
                 return
-            case '-': 
-                setCurrentNumber(`${(fistNumber - lastNumber).toString()}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
+            case '-':
+                setCurrentNumber(`${(firstNumber - lastNumber).toString()}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
                 return
             case 'x':
-                setCurrentNumber(`${(fistNumber * lastNumber).toString()}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
+                setCurrentNumber(`${(firstNumber * lastNumber).toString()}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
+                return
+            case '%':
+                //DIVIDE POR 0
+                let result = 0
+                if(!lastNumber && !splitNumbers[2].includes('0') && splitNumbers[2] !== '-')
+                    result = firstNumber / 100
+                else
+                    result = lastNumber / 100 * firstNumber
+                setCurrentNumber(`${result}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
                 return
             case '/':
                 //DIVIDE POR 0
-                const resultDiv = (fistNumber / lastNumber);
+                const resultDiv = (firstNumber / lastNumber);
                 if((!resultDiv && !resultDiv.toString().includes('0')) || !Number.isFinite(resultDiv)){
-                        setLastNumber("Error")
-                        setCurrentNumber("")
-                        return
-                    }
+                    setLastNumber("Error")
+                    setCurrentNumber("")
+                    return
+                }
                 setCurrentNumber(`${resultDiv.toString()}${params.operatorPressed ? ` ${params.operatorPressed} ` : ''}`)
                 return
         }
@@ -56,29 +69,39 @@ module.exports = function CalculatorScreen(){
         //ALGUNS BOTÕES
         switch(buttonPressed){
             case 'DEL':
-                setCurrentNumber(currentNumber.substring(0, (currentNumber.length - ((values.length == 2) ? 3 : 1))))
+                setCurrentNumber(currentNumber.substring(0, (currentNumber.length -
+                    (((values.length == 2) || (values.length > 2 && values[2] === '')) ? 3 : (values.length > 2 && values[2] === '-') ? 4 : 1)
+                )))
                 return
             case 'LIMPAR': // Limpa todo o conteúdo
                 setLastNumber("") 
                 setCurrentNumber("") 
                 return
             case '=':
-                if(values.length > 2 && values[2]){
-                    setLastNumber(`${currentNumber} = `)
-                    calculator()
-                }
+                if((values.length > 2 && values[2]) || (values.length > 1 && values[1] === '%')) calculator()
                 return
             case '.':
                 if(!(lastPartOfCurrentNumber === '.'))
-                    if(lastPartOfCurrentNumber === ' ' || lastPartOfCurrentNumber === '')
+                    if(lastPartOfCurrentNumber === ' ' || lastPartOfCurrentNumber === '' || lastPartOfCurrentNumber === '-'){
                         setCurrentNumber(`${currentNumber}0${buttonPressed}`)
-                    else{
+                    }else{
                         let indexNow = 0
                         if(values.length > 2) indexNow = 2
                         if(!values[indexNow].includes('.')) break
                     }
                 return
-            case '+/-': //Melhorias
+            case '+/-':
+                if(values.length == 1){
+                    if(!values[0]) setCurrentNumber('-')
+                    else if(values[0].startsWith('-')) setCurrentNumber(currentNumber.substr(1, currentNumber.length))
+                    else setCurrentNumber(`-${currentNumber}`)
+                }else{
+                    if(values.length > 2){
+                        if(!values[2]) setCurrentNumber(`${values[0]} ${values[1]} -`)
+                        if(values[2].startsWith('-')) setCurrentNumber(`${values[0]} ${values[1]} ${values[2].substr(1, values[2].length)}`)
+                        else setCurrentNumber(`${values[0]} ${values[1]} -${values[2]}`)
+                    }
+                }
                 return
         }
         //Operator
