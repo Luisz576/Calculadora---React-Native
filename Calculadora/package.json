@@ -1,5 +1,5 @@
 {
-  "name": "Calculadora",
+  "name": "calculadora",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -14,11 +14,17 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
     "react": "16.13.1",
-    "react-native": "0.63.3"
+    "react-native": ">=0.64.1"
   },
   "devDependencies": {
     "@babel/core": "7.11.6",
     "@babel/runtime": "7.11.2",
+    "xmldom": ">=0.5.0",
+    "lodash": ">=4.17.21",
+    "node-notifier": ">=8.0.1",
+    "y18n": ">=4.0.1",
+    "hosted-git-info": ">=2.8.9",
+    "ws": ">=5.2.3",
     "@react-native-community/eslint-config": "1.1.0",
     "babel-jest": "25.5.1",
     "eslint": "^6.8.0",
